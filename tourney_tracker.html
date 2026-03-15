@@ -164,12 +164,6 @@
             word-wrap: break-word;
         }
 
-        /* Knockout manual dropdowns */
-        select.manual-drop {
-            background: #111; color: var(--neon-green); border: 1px solid var(--neon-green); padding: 12px 5px;
-            border-radius: 8px; font-family: 'Orbitron', sans-serif; font-size: 1rem; width: 45%; text-align: center; outline: none;
-        }
-
         .vs-text { font-family: 'Orbitron', sans-serif; color: var(--neon-pink); font-weight: bold; font-size: 1.2rem; }
 
         /* Draft Phase */
@@ -264,11 +258,12 @@
                             <th>W</th>
                             <th>D</th>
                             <th>L</th>
+                            <th>GW</th>
                             <th>Pts</th>
                         </tr>
                     </thead>
                     <tbody id="leaderboard-body">
-                        </tbody>
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -276,33 +271,33 @@
         <div class="bracket-section">
             <h2>Road to Glory</h2>
             <div class="bracket-container">
-                <div class="bracket-row">
+                <div class="bracket-row" id="br-row-1">
                     <div class="bracket-box">
                         <div class="bracket-title">Qualifier 1</div>
-                        <div class="bracket-players">1st <span class="bracket-vs">v</span> 2nd</div>
+                        <div class="bracket-players" id="br-q1">1st <span class="bracket-vs">v</span> 2nd</div>
                     </div>
                     <div class="bracket-box">
                         <div class="bracket-title">Eliminator</div>
-                        <div class="bracket-players">3rd <span class="bracket-vs">v</span> 4th</div>
+                        <div class="bracket-players" id="br-elim">3rd <span class="bracket-vs">v</span> 4th</div>
                     </div>
                 </div>
-                <div class="bracket-row">
+                <div class="bracket-row" id="br-row-2">
                     <div class="bracket-box centered">
                         <div class="bracket-title">Qualifier 2</div>
-                        <div class="bracket-players">Loser Q1 <span class="bracket-vs">v</span> Win Elim</div>
+                        <div class="bracket-players" id="br-q2">Loser Q1 <span class="bracket-vs">v</span> Win Elim</div>
                     </div>
                 </div>
-                <div class="bracket-row">
+                <div class="bracket-row" id="br-row-3">
                     <div class="bracket-box final">
                         <div class="bracket-title" style="color: var(--gold);">Grand Final</div>
-                        <div class="bracket-players">Winner Q1 <span class="bracket-vs">v</span> Winner Q2</div>
+                        <div class="bracket-players" id="br-final">Winner Q1 <span class="bracket-vs">v</span> Winner Q2</div>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="tracker-container" id="trackers">
-            </div>
+        </div>
 
         <div class="logs-section">
             <h2>History Log</h2>
@@ -314,16 +309,15 @@
     <script>
         const players = ["Bayezid", "Yusha", "Fatiha", "Zariya", "Yusuf", "Sadeed"];
         
-        // Added the isKnockout flag to enable manual dropdowns
         const tournamentFixtures = [
             { name: "Round 1: El Classico", isKnockout: false, matches: [ ["Bayezid", "Sadeed"], ["Yusha", "Yusuf"], ["Fatiha", "Zariya"] ] },
             { name: "Round 2: Mysterious Opponent", isKnockout: false, matches: [ ["Bayezid", "Yusuf"], ["Yusha", "Zariya"], ["Sadeed", "Fatiha"] ] },
             { name: "Round 3: The Sibling Battles", isKnockout: false, matches: [ ["Bayezid", "Yusha"], ["Sadeed", "Zariya"], ["Yusuf", "Fatiha"] ] },
             { name: "Round 4: The Final Push", isKnockout: false, matches: [ ["Bayezid", "Zariya"], ["Yusha", "Fatiha"], ["Sadeed", "Yusuf"] ] },
             { name: "Round 5: Do or Die", isKnockout: false, matches: [ ["Bayezid", "Fatiha"], ["Yusha", "Sadeed"], ["Zariya", "Yusuf"] ] },
-            { name: "Q1 & Eliminator", isKnockout: true, matches: [ ["Player A", "Player B"], ["Player C", "Player D"] ] }, // 2 matches
-            { name: "Qualifier 2", isKnockout: true, matches: [ ["Player A", "Player B"] ] }, // 1 match
-            { name: "The Grand Final", isKnockout: true, matches: [ ["Player A", "Player B"] ] } // 1 match
+            { name: "Q1 & Eliminator", isKnockout: true, matches: [ ["Player A", "Player B"], ["Player C", "Player D"] ] },
+            { name: "Qualifier 2", isKnockout: true, matches: [ ["Player A", "Player B"] ] },
+            { name: "The Grand Final", isKnockout: true, matches: [ ["Player A", "Player B"] ] }
         ];
 
         const gamesDB = {
@@ -367,10 +361,19 @@
 
         let leaderboard = {};
         players.forEach(p => {
-            leaderboard[p] = { played: 0, won: 0, drawn: 0, lost: 0, points: 0 };
+            leaderboard[p] = { played: 0, won: 0, drawn: 0, lost: 0, points: 0, gameWins: 0 };
         });
 
         const state = {};
+        let playoffs = { q1Win: null, q1Lose: null, elimWin: null, q2Win: null };
+
+        function getSortedPlayers() {
+            return Object.keys(leaderboard).sort((a, b) => {
+                if (leaderboard[b].points !== leaderboard[a].points) return leaderboard[b].points - leaderboard[a].points;
+                if (leaderboard[b].gameWins !== leaderboard[a].gameWins) return leaderboard[b].gameWins - leaderboard[a].gameWins; 
+                return leaderboard[b].won - leaderboard[a].won; 
+            });
+        }
 
         function initApp() {
             updateLeaderboardUI();
@@ -378,13 +381,22 @@
         }
 
         function loadSelectedRound() {
-            const roundIdx = document.getElementById('global-round').value;
+            const roundIdx = parseInt(document.getElementById('global-round').value);
             const fix = tournamentFixtures[roundIdx];
-            
-            const container = document.getElementById('trackers');
-            container.innerHTML = ''; // Clear existing cards
+            const sortedPlayers = getSortedPlayers();
 
-            // Dynamically create 1, 2, or 3 cards based on the round type
+            if (roundIdx === 5) {
+                fix.matches[0] = [sortedPlayers[0], sortedPlayers[1]]; 
+                fix.matches[1] = [sortedPlayers[2], sortedPlayers[3]]; 
+            } else if (roundIdx === 6) {
+                fix.matches[0] = [playoffs.q1Lose || "Loser Q1", playoffs.elimWin || "Win Elim"]; 
+            } else if (roundIdx === 7) {
+                fix.matches[0] = [playoffs.q1Win || "Winner Q1", playoffs.q2Win || "Winner Q2"]; 
+            }
+
+            const container = document.getElementById('trackers');
+            container.innerHTML = ''; 
+
             for (let i = 1; i <= fix.matches.length; i++) {
                 const card = document.createElement('div');
                 card.className = 'match-card';
@@ -394,18 +406,28 @@
                 const p1 = fix.matches[i-1][0];
                 const p2 = fix.matches[i-1][1];
                 
-                state[i] = { phase: 1, roundName: fix.name, isKnockout: fix.isKnockout, p1: p1, p2: p2, p1Picks: [], p2Picks: [], results: [null, null, null, null, null, null] };
+                if (roundIdx >= 5 && (p1.includes("Winner") || p1.includes("Loser") || p2.includes("Win "))) {
+                    card.innerHTML = `<div style="text-align:center; padding: 20px; color:#888;">Complete previous matches to unlock this fixture.</div>`;
+                    continue;
+                }
+
+                // Split the playoff names for the UI and logs
+                let specificRoundName = fix.name;
+                if (roundIdx === 5) {
+                    specificRoundName = (i === 1) ? "Qualifier 1" : "Eliminator";
+                }
+
+                state[i] = { phase: 1, roundName: specificRoundName, isKnockout: fix.isKnockout, p1: p1, p2: p2, p1Picks: [], p2Picks: [], results: [null, null, null, null, null, null] };
                 
                 renderPhase1(i);
             }
+            
+            updateBracketUI(sortedPlayers); 
         }
 
         function updateLeaderboardUI() {
             const tbody = document.getElementById('leaderboard-body');
-            const sortedPlayers = Object.keys(leaderboard).sort((a, b) => {
-                if (leaderboard[b].points !== leaderboard[a].points) return leaderboard[b].points - leaderboard[a].points;
-                return leaderboard[b].won - leaderboard[a].won; 
-            });
+            const sortedPlayers = getSortedPlayers();
 
             let html = '';
             sortedPlayers.forEach((p, index) => {
@@ -423,18 +445,35 @@
                         <td>${stats.won}</td>
                         <td>${stats.drawn}</td>
                         <td>${stats.lost}</td>
+                        <td>${stats.gameWins}</td>
                         <td class="pts-col">${stats.points}</td>
                     </tr>
                 `;
             });
             tbody.innerHTML = html;
+            
+            updateBracketUI(sortedPlayers);
+        }
+
+        function updateBracketUI(sorted) {
+            if (sorted.length >= 4) {
+                document.getElementById('br-q1').innerHTML = `${sorted[0]} <span class="bracket-vs">v</span> ${sorted[1]}`;
+                document.getElementById('br-elim').innerHTML = `${sorted[2]} <span class="bracket-vs">v</span> ${sorted[3]}`;
+            }
+            document.getElementById('br-q2').innerHTML = `${playoffs.q1Lose || 'Loser Q1'} <span class="bracket-vs">v</span> ${playoffs.elimWin || 'Win Elim'}`;
+            document.getElementById('br-final').innerHTML = `${playoffs.q1Win || 'Winner Q1'} <span class="bracket-vs">v</span> ${playoffs.q2Win || 'Winner Q2'}`;
+
+            const roundVal = parseInt(document.getElementById('global-round').value);
+            document.getElementById('br-row-1').style.display = roundVal >= 6 ? 'none' : 'flex';
+            document.getElementById('br-row-2').style.display = roundVal >= 7 ? 'none' : 'flex';
         }
 
         function processMatchResultForLeaderboard(p1, p2, p1Score, p2Score, isKnockout) {
-            // Only add to the official points table if it is the group stage
             if (!isKnockout) {
                 leaderboard[p1].played += 1;
                 leaderboard[p2].played += 1;
+                leaderboard[p1].gameWins += p1Score; 
+                leaderboard[p2].gameWins += p2Score; 
 
                 if (p1Score > p2Score) {
                     leaderboard[p1].won += 1; leaderboard[p1].points += 3; leaderboard[p2].lost += 1;
@@ -451,55 +490,26 @@
             const s = state[matchId];
             const card = document.getElementById(`match-${matchId}`);
             
-            let playerOptions = players.map(p => `<option value="${p}">${p}</option>`).join('');
+            let headerText = `MATCH ${matchId} SETUP`;
+            if (s.roundName === "Qualifier 1") headerText = "QUALIFIER 1 SETUP";
+            else if (s.roundName === "Eliminator") headerText = "ELIMINATOR SETUP";
+            else if (s.roundName.includes("Qualifier 2")) headerText = "QUALIFIER 2 SETUP";
+            else if (s.roundName.includes("Grand Final")) headerText = "GRAND FINAL SETUP";
 
-            // If it's a knockout round, give dropdowns so the user can assign the finalists manually
-            let rowHTML = '';
-            if (s.isKnockout) {
-                rowHTML = `
-                    <select class="manual-drop" id="m${matchId}-p1-select">
-                        <option value="" disabled selected>Player 1</option>
-                        ${playerOptions}
-                    </select>
-                    <span class="vs-text">VS</span>
-                    <select class="manual-drop" id="m${matchId}-p2-select">
-                        <option value="" disabled selected>Player 2</option>
-                        ${playerOptions}
-                    </select>
-                `;
-            } else {
-                rowHTML = `
+            card.innerHTML = `
+                <div class="match-header">${headerText}</div>
+                <div class="round-name-display" style="text-align: center;">${s.roundName}</div>
+                <div class="player-select-row">
                     <div class="fixed-player">${s.p1}</div>
                     <span class="vs-text">VS</span>
                     <div class="fixed-player">${s.p2}</div>
-                `;
-            }
-
-            card.innerHTML = `
-                <div class="match-header">MATCH ${matchId} SETUP</div>
-                <div class="round-name-display" style="text-align: center;">${s.roundName}</div>
-                <div class="player-select-row">
-                    ${rowHTML}
                 </div>
-                <button class="btn-action" style="margin-top: 25px;" onclick="startDraft(${matchId})">Start Draft</button>
+                <button class="btn-action" style="margin-top: 25px;" onclick="startDraft(${matchId})">START DRAFT</button>
             `;
         }
 
         function startDraft(matchId) {
             const s = state[matchId];
-            
-            // If it's a knockout stage, lock in the selected players before moving forward
-            if (s.isKnockout) {
-                const p1Select = document.getElementById(`m${matchId}-p1-select`).value;
-                const p2Select = document.getElementById(`m${matchId}-p2-select`).value;
-                
-                if (!p1Select || !p2Select) return alert("Please select both players for this playoff match.");
-                if (p1Select === p2Select) return alert("A player cannot play against themselves!");
-                
-                s.p1 = p1Select;
-                s.p2 = p2Select;
-            }
-
             s.phase = 2;
             renderPhase2(matchId);
         }
@@ -676,6 +686,20 @@
 
             processMatchResultForLeaderboard(s.p1, s.p2, p1Score, p2Score, s.isKnockout);
 
+            if (s.isKnockout) {
+                let winner = p1Score > p2Score ? s.p1 : s.p2; 
+                let loser = p1Score > p2Score ? s.p2 : s.p1;
+                
+                if (s.roundName === "Qualifier 1") {
+                    playoffs.q1Win = winner; playoffs.q1Lose = loser; 
+                } else if (s.roundName === "Eliminator") {
+                    playoffs.elimWin = winner; 
+                } else if (s.roundName.includes("Qualifier 2")) {
+                    playoffs.q2Win = winner; 
+                }
+                updateLeaderboardUI(); 
+            }
+
             let logClass = "log-item";
             let resultText = "";
 
@@ -701,12 +725,17 @@
         }
 
         function cancelToSetup(matchId) {
-            const roundIdx = document.getElementById('global-round').value;
+            const roundIdx = parseInt(document.getElementById('global-round').value);
             const fix = tournamentFixtures[roundIdx];
             const p1 = fix.matches[matchId-1][0];
             const p2 = fix.matches[matchId-1][1];
             
-            state[matchId] = { phase: 1, roundName: fix.name, isKnockout: fix.isKnockout, p1: p1, p2: p2, p1Picks: [], p2Picks: [], results: [null, null, null, null, null, null] };
+            let specificRoundName = fix.name;
+            if (roundIdx === 5) {
+                specificRoundName = (matchId === 1) ? "Qualifier 1" : "Eliminator";
+            }
+            
+            state[matchId] = { phase: 1, roundName: specificRoundName, isKnockout: fix.isKnockout, p1: p1, p2: p2, p1Picks: [], p2Picks: [], results: [null, null, null, null, null, null] };
             renderPhase1(matchId);
         }
 
