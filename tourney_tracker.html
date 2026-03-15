@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0b0c10">
+    <title>Tournament App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0c10;
+            --panel-bg: #1f2833;
+            --text-main: #c5c6c7;
+            --neon-blue: #45f3ff;
+            --neon-pink: #ff007f;
+            --neon-green: #2ecc71;
+            --gold: #ffd700;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Rajdhani', sans-serif;
+            margin: 0;
+            padding: 10px; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            -webkit-tap-highlight-color: transparent; 
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--neon-blue);
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(69, 243, 255, 0.3);
+            margin: 10px 0 20px 0;
+            text-align: center;
+            font-weight: 900;
+            font-size: 1.8rem;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 600px; 
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Global Fixture Selector */
+        .fixture-control-bar {
+            background: var(--panel-bg);
+            border: 1px solid var(--neon-blue);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column; 
+            gap: 10px;
+            box-shadow: 0 0 15px rgba(69, 243, 255, 0.2);
+        }
+
+        .fixture-control-bar label {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--text-main);
+            font-size: 1rem;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .fixture-control-bar select {
+            background: #111;
+            color: var(--neon-blue);
+            border: 1px solid var(--neon-blue);
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            outline: none;
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        /* Leaderboard Section */
+        .leaderboard-section {
+            background: var(--panel-bg);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        
+        .leaderboard-section h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--gold);
+            margin-top: 0;
+            text-align: center;
+            font-size: 1.3rem;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table { width: 100%; border-collapse: collapse; text-align: center; font-size: 1rem; min-width: 450px; }
+        th { font-family: 'Orbitron', sans-serif; color: #888; padding: 10px 5px; border-bottom: 2px solid #333; font-size: 0.9rem; }
+        td { padding: 10px 5px; border-bottom: 1px solid #222; }
+
+        .rank-1 { color: var(--gold); font-weight: bold; font-size: 1.1rem; }
+        .rank-2 { color: #c0c0c0; font-weight: bold; }
+        .rank-3 { color: #cd7f32; font-weight: bold; }
+        .pts-col { color: var(--neon-green); font-weight: bold; font-size: 1.1rem; }
+
+        /* Playoff Bracket Section */
+        .bracket-section {
+            background: var(--panel-bg);
+            border: 1px solid var(--neon-pink);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 0 20px rgba(255, 0, 127, 0.2);
+        }
+
+        .bracket-section h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--neon-pink);
+            margin-top: 0;
+            text-align: center;
+            font-size: 1.3rem;
+            text-shadow: 0 0 10px rgba(255, 0, 127, 0.3);
+        }
+
+        .bracket-container { display: flex; flex-direction: column; gap: 15px; align-items: center; }
+        .bracket-row { display: flex; justify-content: space-around; width: 100%; gap: 10px; }
+        
+        .bracket-box {
+            background: rgba(0,0,0,0.4); border: 1px solid #444; border-radius: 8px; padding: 10px 5px; width: 48%; text-align: center;
+        }
+        .bracket-box.centered { width: 60%; border-color: var(--neon-blue); background: rgba(69, 243, 255, 0.05); }
+        .bracket-box.final { width: 80%; border-color: var(--gold); background: rgba(255, 215, 0, 0.1); box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
+        
+        .bracket-title { font-family: 'Orbitron', sans-serif; font-size: 0.7rem; color: #888; margin-bottom: 5px; text-transform: uppercase; font-weight: bold; }
+        .bracket-players { font-weight: bold; font-size: 0.95rem; color: #eee; }
+        .bracket-vs { color: var(--neon-pink); font-size: 0.8rem; margin: 0 5px; font-family: 'Orbitron', sans-serif; }
+
+        /* Tracker Cards */
+        .tracker-container { display: flex; flex-direction: column; gap: 20px; }
+        .match-card {
+            background: var(--panel-bg); border: 1px solid rgba(69, 243, 255, 0.2); border-radius: 12px;
+            padding: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 15px;
+        }
+
+        .match-header { font-family: 'Orbitron', sans-serif; text-align: center; color: #888; font-size: 0.9rem; letter-spacing: 1px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .round-name-display { color: var(--neon-blue); font-size: 1.1rem; font-weight: bold; display: block; margin-bottom: 5px; }
+
+        /* Setup Phase */
+        .player-select-row { display: flex; justify-content: space-between; align-items: center; gap: 5px; margin-top: 10px; }
+        
+        .fixed-player {
+            background: rgba(0,0,0,0.5); color: #fff; border: 1px solid #444; padding: 15px 5px;
+            border-radius: 8px; font-family: 'Orbitron', sans-serif; font-size: 1rem; width: 45%; text-align: center; box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+            word-wrap: break-word;
+        }
+
+        /* Knockout manual dropdowns */
+        select.manual-drop {
+            background: #111; color: var(--neon-green); border: 1px solid var(--neon-green); padding: 12px 5px;
+            border-radius: 8px; font-family: 'Orbitron', sans-serif; font-size: 1rem; width: 45%; text-align: center; outline: none;
+        }
+
+        .vs-text { font-family: 'Orbitron', sans-serif; color: var(--neon-pink); font-weight: bold; font-size: 1.2rem; }
+
+        /* Draft Phase */
+        .draft-section { display: flex; flex-direction: column; gap: 10px; }
+        .draft-header { font-size: 0.85rem; color: #aaa; text-align: center; font-weight: bold; text-transform: uppercase; border-bottom: 1px dashed #444; padding-bottom: 5px; }
+        .draft-header span { color: var(--neon-blue); font-family: 'Orbitron', sans-serif;}
+        .draft-grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+        
+        .draft-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.2s; opacity: 0.5; width: 65px; }
+        .draft-item img { width: 65px; height: 65px; object-fit: cover; border-radius: 8px; border: 2px solid transparent; }
+        .draft-item span { font-size: 0.65rem; color: #ccc; margin-top: 5px; text-align: center; line-height: 1.1; font-weight: bold; }
+        .draft-item.selected { opacity: 1; transform: translateY(-3px); }
+        .draft-item.selected img { border-color: var(--neon-green); box-shadow: 0 0 10px rgba(46, 204, 113, 0.5); }
+        .draft-item.disabled:not(.selected) { pointer-events: none; filter: grayscale(100%); opacity: 0.15; }
+
+        /* Track Phase */
+        .score-board { display: flex; justify-content: center; align-items: center; gap: 20px; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; border: 1px solid #333; }
+        .score { font-family: 'Orbitron', sans-serif; font-size: 2.5rem; font-weight: bold; color: var(--gold); width: 60px; text-align: center; text-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
+        
+        .games-list { display: flex; flex-direction: column; gap: 10px; margin-top: 5px; }
+        
+        .game-row { display: flex; flex-direction: column; gap: 10px; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; border: 1px solid #222; }
+        .game-row-header { display: flex; align-items: center; gap: 12px; }
+        .game-icon { width: 45px; height: 45px; border-radius: 6px; object-fit: cover; border: 1px solid #444; }
+        
+        .game-info { flex-grow: 1; display: flex; flex-direction: column; }
+        .game-name { font-size: 1.2rem; color: #eee; font-weight: bold; }
+        .picker-tag { font-size: 0.75rem; color: #888; text-transform: uppercase; font-weight: bold; font-family: 'Orbitron', sans-serif; }
+        .picker-tag span { color: var(--neon-blue); }
+
+        .result-toggles { display: flex; gap: 6px; width: 100%; }
+        .result-btn {
+            flex: 1; 
+            background: #111; border: 1px solid #444; color: #888; padding: 12px 0;
+            border-radius: 6px; cursor: pointer; font-family: 'Orbitron', sans-serif; font-size: 0.9rem; font-weight: bold; transition: 0.2s;
+            text-align: center;
+        }
+        .btn-p1.active { background: rgba(69, 243, 255, 0.2); border-color: var(--neon-blue); color: var(--neon-blue); }
+        .btn-draw.active { background: rgba(241, 196, 15, 0.2); border-color: #f1c40f; color: #f1c40f; }
+        .btn-p2.active { background: rgba(255, 0, 127, 0.2); border-color: var(--neon-pink); color: var(--neon-pink); }
+
+        /* Action Buttons */
+        .btn-action {
+            background: rgba(69, 243, 255, 0.1); border: 1px solid var(--neon-blue); color: var(--neon-blue);
+            padding: 16px; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-size: 1.1rem;
+            cursor: pointer; text-transform: uppercase; transition: 0.3s; margin-top: 10px; width: 100%; font-weight: bold;
+        }
+        .btn-action:active:not(:disabled) { background: var(--neon-blue); color: var(--bg-color); } 
+        .btn-action:disabled { opacity: 0.5; pointer-events: none; border-color: #555; color: #555; }
+        
+        .btn-danger { border-color: var(--danger); color: var(--danger); background: rgba(231, 76, 60, 0.1); margin-top: 5px; }
+        .btn-danger:active { background: var(--danger); color: #fff; }
+
+        /* Logs */
+        .logs-section { background: var(--panel-bg); border-radius: 12px; padding: 15px; border: 1px solid rgba(255, 0, 127, 0.2); }
+        .logs-section h2 { font-family: 'Orbitron', sans-serif; color: var(--neon-pink); margin-top: 0; font-size: 1.3rem; text-align: center;}
+        .log-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+        .log-item { background: rgba(0,0,0,0.3); padding: 15px; border-left: 4px solid var(--neon-green); border-radius: 6px; display: flex; flex-direction: column; gap: 5px; font-size: 1rem;}
+        .draw-log { border-left-color: #f1c40f; }
+        .log-item-match-name { color: var(--neon-blue); font-size: 0.85rem; font-weight: bold; font-family: 'Orbitron', sans-serif; }
+    </style>
+</head>
+<body>
+
+    <h1>Tournament App</h1>
+
+    <div class="main-container">
+        
+        <div class="fixture-control-bar">
+            <label for="global-round">Active Stage</label>
+            <select id="global-round" onchange="loadSelectedRound()">
+                <option value="0">Round 1: El Classico</option>
+                <option value="1">Round 2: Mysterious Opponent</option>
+                <option value="2">Round 3: The Sibling Battles</option>
+                <option value="3">Round 4: The Final Push</option>
+                <option value="4">Round 5: Do or Die</option>
+                <option value="5">Playoffs: Q1 & Eliminator</option>
+                <option value="6">Playoffs: Qualifier 2</option>
+                <option value="7">Playoffs: Grand Final</option>
+            </select>
+        </div>
+
+        <div class="leaderboard-section">
+            <h2>Live Standings</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rnk</th>
+                            <th style="text-align: left;">Player</th>
+                            <th>P</th>
+                            <th>W</th>
+                            <th>D</th>
+                            <th>L</th>
+                            <th>Pts</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="bracket-section">
+            <h2>Road to Glory</h2>
+            <div class="bracket-container">
+                <div class="bracket-row">
+                    <div class="bracket-box">
+                        <div class="bracket-title">Qualifier 1</div>
+                        <div class="bracket-players">1st <span class="bracket-vs">v</span> 2nd</div>
+                    </div>
+                    <div class="bracket-box">
+                        <div class="bracket-title">Eliminator</div>
+                        <div class="bracket-players">3rd <span class="bracket-vs">v</span> 4th</div>
+                    </div>
+                </div>
+                <div class="bracket-row">
+                    <div class="bracket-box centered">
+                        <div class="bracket-title">Qualifier 2</div>
+                        <div class="bracket-players">Loser Q1 <span class="bracket-vs">v</span> Win Elim</div>
+                    </div>
+                </div>
+                <div class="bracket-row">
+                    <div class="bracket-box final">
+                        <div class="bracket-title" style="color: var(--gold);">Grand Final</div>
+                        <div class="bracket-players">Winner Q1 <span class="bracket-vs">v</span> Winner Q2</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tracker-container" id="trackers">
+            </div>
+
+        <div class="logs-section">
+            <h2>History Log</h2>
+            <ul class="log-list" id="match-logs"></ul>
+        </div>
+
+    </div>
+
+    <script>
+        const players = ["Bayezid", "Yusha", "Fatiha", "Zariya", "Yusuf", "Sadeed"];
+        
+        // Added the isKnockout flag to enable manual dropdowns
+        const tournamentFixtures = [
+            { name: "Round 1: El Classico", isKnockout: false, matches: [ ["Bayezid", "Sadeed"], ["Yusha", "Yusuf"], ["Fatiha", "Zariya"] ] },
+            { name: "Round 2: Mysterious Opponent", isKnockout: false, matches: [ ["Bayezid", "Yusuf"], ["Yusha", "Zariya"], ["Sadeed", "Fatiha"] ] },
+            { name: "Round 3: The Sibling Battles", isKnockout: false, matches: [ ["Bayezid", "Yusha"], ["Sadeed", "Zariya"], ["Yusuf", "Fatiha"] ] },
+            { name: "Round 4: The Final Push", isKnockout: false, matches: [ ["Bayezid", "Zariya"], ["Yusha", "Fatiha"], ["Sadeed", "Yusuf"] ] },
+            { name: "Round 5: Do or Die", isKnockout: false, matches: [ ["Bayezid", "Fatiha"], ["Yusha", "Sadeed"], ["Zariya", "Yusuf"] ] },
+            { name: "Q1 & Eliminator", isKnockout: true, matches: [ ["Player A", "Player B"], ["Player C", "Player D"] ] }, // 2 matches
+            { name: "Qualifier 2", isKnockout: true, matches: [ ["Player A", "Player B"] ] }, // 1 match
+            { name: "The Grand Final", isKnockout: true, matches: [ ["Player A", "Player B"] ] } // 1 match
+        ];
+
+        const gamesDB = {
+            "4_in_a_row": { name: "4 in Row", img: "4_in_a_row.jpg" },
+            "archery": { name: "Archery", img: "archery.jpg" },
+            "cannon_duel": { name: "Cannon", img: "cannon_duel.jpg" },
+            "checkers": { name: "Checkers", img: "checkers.jpg" },
+            "color_wars": { name: "Color Wars", img: "color_wars.jpg" },
+            "crash_it": { name: "Crash It", img: "crash_it.jpg" },
+            "darts": { name: "Darts", img: "darts.jpg" },
+            "disco_battle": { name: "Disco Btl", img: "disco_battle.jpg" },
+            "fatal_siege": { name: "Siege", img: "fatal_siege.jpg" },
+            "find_match": { name: "Find Match", img: "find_match.jpg" },
+            "flappy_jump": { name: "Flappy", img: "flappy_jump.jpg" },
+            "golf_football": { name: "Golf FB", img: "golf_football.jpg" },
+            "hammer_hit": { name: "Hammer", img: "hammer_hit.jpg" },
+            "happy_birds": { name: "Happy Bird", img: "happy_birds.jpg" },
+            "lumber_jack": { name: "Lumber", img: "lumber_jack.jpg" },
+            "math_quiz": { name: "Math Quiz", img: "math_quiz.jpg" },
+            "pool": { name: "Pool", img: "pool.jpg" },
+            "sea_battle": { name: "Sea Battle", img: "sea_battle.jpg" },
+            "ship_battle": { name: "Ship Btl", img: "ship_battle.jpg" },
+            "sling_puck": { name: "Sling Shot", img: "sling_puck.jpg" },
+            "spike_attacks": { name: "Spike Atk", img: "spike_attacks.jpg" },
+            "stampede": { name: "Stampede", img: "stampede.jpg" },
+            "sticky_tongue": { name: "Tongue", img: "sticky_tongue.jpg" },
+            "tanks": { name: "Tanks", img: "tanks.jpg" },
+            "target_practice": { name: "Target", img: "target_practice.jpg" },
+            "taxi_race": { name: "Taxi Race", img: "taxi_race.jpg" },
+            "tennis": { name: "Tennis", img: "tennis.jpg" }
+        };
+
+        const playerDecks = {
+            "Bayezid": ["golf_football", "math_quiz", "tanks", "target_practice", "sling_puck", "find_match", "4_in_a_row"],
+            "Yusha": ["stampede", "tennis", "checkers", "crash_it", "pool", "sticky_tongue", "fatal_siege"],
+            "Fatiha": ["darts", "sea_battle", "archery", "sling_puck", "hammer_hit", "happy_birds", "color_wars"],
+            "Zariya": ["stampede", "spike_attacks", "tennis", "flappy_jump", "taxi_race", "sling_puck", "darts"],
+            "Yusuf": ["hammer_hit", "darts", "archery", "crash_it", "tennis", "disco_battle", "ship_battle"],
+            "Sadeed": ["golf_football", "tennis", "spike_attacks", "disco_battle", "cannon_duel", "happy_birds", "darts"]
+        };
+
+        let leaderboard = {};
+        players.forEach(p => {
+            leaderboard[p] = { played: 0, won: 0, drawn: 0, lost: 0, points: 0 };
+        });
+
+        const state = {};
+
+        function initApp() {
+            updateLeaderboardUI();
+            loadSelectedRound();
+        }
+
+        function loadSelectedRound() {
+            const roundIdx = document.getElementById('global-round').value;
+            const fix = tournamentFixtures[roundIdx];
+            
+            const container = document.getElementById('trackers');
+            container.innerHTML = ''; // Clear existing cards
+
+            // Dynamically create 1, 2, or 3 cards based on the round type
+            for (let i = 1; i <= fix.matches.length; i++) {
+                const card = document.createElement('div');
+                card.className = 'match-card';
+                card.id = `match-${i}`;
+                container.appendChild(card);
+
+                const p1 = fix.matches[i-1][0];
+                const p2 = fix.matches[i-1][1];
+                
+                state[i] = { phase: 1, roundName: fix.name, isKnockout: fix.isKnockout, p1: p1, p2: p2, p1Picks: [], p2Picks: [], results: [null, null, null, null, null, null] };
+                
+                renderPhase1(i);
+            }
+        }
+
+        function updateLeaderboardUI() {
+            const tbody = document.getElementById('leaderboard-body');
+            const sortedPlayers = Object.keys(leaderboard).sort((a, b) => {
+                if (leaderboard[b].points !== leaderboard[a].points) return leaderboard[b].points - leaderboard[a].points;
+                return leaderboard[b].won - leaderboard[a].won; 
+            });
+
+            let html = '';
+            sortedPlayers.forEach((p, index) => {
+                const stats = leaderboard[p];
+                let rankClass = '';
+                if (index === 0 && stats.points > 0) rankClass = 'rank-1';
+                if (index === 1 && stats.points > 0) rankClass = 'rank-2';
+                if (index === 2 && stats.points > 0) rankClass = 'rank-3';
+
+                html += `
+                    <tr>
+                        <td class="${rankClass}">${index + 1}</td>
+                        <td style="text-align: left; font-weight: bold;">${p}</td>
+                        <td>${stats.played}</td>
+                        <td>${stats.won}</td>
+                        <td>${stats.drawn}</td>
+                        <td>${stats.lost}</td>
+                        <td class="pts-col">${stats.points}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function processMatchResultForLeaderboard(p1, p2, p1Score, p2Score, isKnockout) {
+            // Only add to the official points table if it is the group stage
+            if (!isKnockout) {
+                leaderboard[p1].played += 1;
+                leaderboard[p2].played += 1;
+
+                if (p1Score > p2Score) {
+                    leaderboard[p1].won += 1; leaderboard[p1].points += 3; leaderboard[p2].lost += 1;
+                } else if (p2Score > p1Score) {
+                    leaderboard[p2].won += 1; leaderboard[p2].points += 3; leaderboard[p1].lost += 1;
+                } else {
+                    leaderboard[p1].drawn += 1; leaderboard[p1].points += 1; leaderboard[p2].drawn += 1; leaderboard[p2].points += 1;
+                }
+                updateLeaderboardUI();
+            }
+        }
+
+        function renderPhase1(matchId) {
+            const s = state[matchId];
+            const card = document.getElementById(`match-${matchId}`);
+            
+            let playerOptions = players.map(p => `<option value="${p}">${p}</option>`).join('');
+
+            // If it's a knockout round, give dropdowns so the user can assign the finalists manually
+            let rowHTML = '';
+            if (s.isKnockout) {
+                rowHTML = `
+                    <select class="manual-drop" id="m${matchId}-p1-select">
+                        <option value="" disabled selected>Player 1</option>
+                        ${playerOptions}
+                    </select>
+                    <span class="vs-text">VS</span>
+                    <select class="manual-drop" id="m${matchId}-p2-select">
+                        <option value="" disabled selected>Player 2</option>
+                        ${playerOptions}
+                    </select>
+                `;
+            } else {
+                rowHTML = `
+                    <div class="fixed-player">${s.p1}</div>
+                    <span class="vs-text">VS</span>
+                    <div class="fixed-player">${s.p2}</div>
+                `;
+            }
+
+            card.innerHTML = `
+                <div class="match-header">MATCH ${matchId} SETUP</div>
+                <div class="round-name-display" style="text-align: center;">${s.roundName}</div>
+                <div class="player-select-row">
+                    ${rowHTML}
+                </div>
+                <button class="btn-action" style="margin-top: 25px;" onclick="startDraft(${matchId})">Start Draft</button>
+            `;
+        }
+
+        function startDraft(matchId) {
+            const s = state[matchId];
+            
+            // If it's a knockout stage, lock in the selected players before moving forward
+            if (s.isKnockout) {
+                const p1Select = document.getElementById(`m${matchId}-p1-select`).value;
+                const p2Select = document.getElementById(`m${matchId}-p2-select`).value;
+                
+                if (!p1Select || !p2Select) return alert("Please select both players for this playoff match.");
+                if (p1Select === p2Select) return alert("A player cannot play against themselves!");
+                
+                s.p1 = p1Select;
+                s.p2 = p2Select;
+            }
+
+            s.phase = 2;
+            renderPhase2(matchId);
+        }
+
+        function renderPhase2(matchId) {
+            const s = state[matchId];
+            const card = document.getElementById(`match-${matchId}`);
+            card.innerHTML = `
+                <div class="match-header">
+                    <span class="round-name-display" style="font-size: 0.9rem;">${s.roundName}</span>
+                    DRAFTING
+                </div>
+                <div class="draft-section">
+                    <div class="draft-header"><span>${s.p1}</span> picks 3 from ${s.p2}</div>
+                    <div class="draft-grid" id="m${matchId}-deck-p2">
+                        ${generateDraftGrid(matchId, s.p2, 'p1Picks')}
+                    </div>
+                </div>
+                <div class="draft-section" style="margin-top: 5px;">
+                    <div class="draft-header"><span>${s.p2}</span> picks 3 from ${s.p1}</div>
+                    <div class="draft-grid" id="m${matchId}-deck-p1">
+                        ${generateDraftGrid(matchId, s.p1, 'p2Picks')}
+                    </div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <button class="btn-action" id="m${matchId}-btn-track" disabled onclick="startTracking(${matchId})">Lock Matches</button>
+                    <button class="btn-action btn-danger" onclick="cancelToSetup(${matchId})">Back</button>
+                </div>
+            `;
+        }
+
+        function generateDraftGrid(matchId, deckOwner, pickingArrayName) {
+            return playerDecks[deckOwner].map(gameId => {
+                const game = gamesDB[gameId];
+                return `
+                    <div class="draft-item" id="m${matchId}-${pickingArrayName}-${gameId}" onclick="toggleDraft(${matchId}, '${pickingArrayName}', '${gameId}')">
+                        <img src="${game.img}" alt="${game.name}">
+                        <span>${game.name}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleDraft(matchId, arrayName, gameId) {
+            const arr = state[matchId][arrayName];
+            const el = document.getElementById(`m${matchId}-${arrayName}-${gameId}`);
+            
+            if (arr.includes(gameId)) {
+                arr.splice(arr.indexOf(gameId), 1);
+                el.classList.remove('selected');
+            } else {
+                if (arr.length >= 3) return; 
+                arr.push(gameId);
+                el.classList.add('selected');
+            }
+            updateDraftVisuals(matchId, arrayName);
+        }
+
+        function updateDraftVisuals(matchId, arrayName) {
+            const arr = state[matchId][arrayName];
+            const deckOwner = arrayName === 'p1Picks' ? state[matchId].p2 : state[matchId].p1;
+            const isFull = arr.length >= 3;
+
+            playerDecks[deckOwner].forEach(gameId => {
+                const el = document.getElementById(`m${matchId}-${arrayName}-${gameId}`);
+                if (isFull && !arr.includes(gameId)) el.classList.add('disabled');
+                else el.classList.remove('disabled');
+            });
+
+            const p1Ready = state[matchId].p1Picks.length === 3;
+            const p2Ready = state[matchId].p2Picks.length === 3;
+            document.getElementById(`m${matchId}-btn-track`).disabled = !(p1Ready && p2Ready);
+        }
+
+        function startTracking(matchId) {
+            state[matchId].phase = 3;
+            state[matchId].results = [null, null, null, null, null, null];
+            renderPhase3(matchId);
+        }
+
+        function renderPhase3(matchId) {
+            const s = state[matchId];
+            const card = document.getElementById(`match-${matchId}`);
+            
+            const finalGames = [];
+            for (let i = 0; i < 3; i++) {
+                finalGames.push({ id: s.p1Picks[i], pickedBy: s.p1 });
+                finalGames.push({ id: s.p2Picks[i], pickedBy: s.p2 });
+            }
+
+            let rowsHTML = '';
+            finalGames.forEach((item, r) => {
+                const game = gamesDB[item.id];
+                rowsHTML += `
+                    <div class="game-row">
+                        <div class="game-row-header">
+                            <img src="${game.img}" class="game-icon">
+                            <div class="game-info">
+                                <div class="game-name">${game.name}</div>
+                                <div class="picker-tag">Picked by: <span>${item.pickedBy}</span></div>
+                            </div>
+                        </div>
+                        <div class="result-toggles">
+                            <button class="result-btn btn-p1" id="m${matchId}-r${r}-p1" onclick="setWinner(${matchId}, ${r}, 'p1')">${s.p1}</button>
+                            <button class="result-btn btn-draw" id="m${matchId}-r${r}-draw" onclick="setWinner(${matchId}, ${r}, 'draw')">Draw</button>
+                            <button class="result-btn btn-p2" id="m${matchId}-r${r}-p2" onclick="setWinner(${matchId}, ${r}, 'p2')">${s.p2}</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            card.innerHTML = `
+                <div class="match-header">
+                    <span class="round-name-display" style="font-size: 0.9rem;">${s.roundName}</span>
+                    ${s.p1} <span style="color:var(--neon-pink)">VS</span> ${s.p2}
+                </div>
+                
+                <div class="score-board">
+                    <div class="score" id="m${matchId}-p1-score">0</div>
+                    <div style="color: #555; font-size: 1.5rem;">-</div>
+                    <div class="score" id="m${matchId}-p2-score">0</div>
+                </div>
+
+                <div class="games-list">
+                    ${rowsHTML}
+                </div>
+
+                <button class="btn-action" onclick="finishMatch(${matchId})">Log Match</button>
+            `;
+        }
+
+        function setWinner(matchId, rowId, winner) {
+            const s = state[matchId];
+            if (s.results[rowId] === winner) s.results[rowId] = null; 
+            else s.results[rowId] = winner;
+            updateScoreUI(matchId);
+        }
+
+        function updateScoreUI(matchId) {
+            let p1Score = 0;
+            let p2Score = 0;
+            const res = state[matchId].results;
+
+            for (let r = 0; r < 6; r++) {
+                if (res[r] === 'p1') p1Score += 1;
+                if (res[r] === 'p2') p2Score += 1;
+                if (res[r] === 'draw') {
+                    p1Score += 0.5;
+                    p2Score += 0.5;
+                }
+
+                if(document.getElementById(`m${matchId}-r${r}-p1`)) {
+                    document.getElementById(`m${matchId}-r${r}-p1`).classList.toggle('active', res[r] === 'p1');
+                    document.getElementById(`m${matchId}-r${r}-draw`).classList.toggle('active', res[r] === 'draw');
+                    document.getElementById(`m${matchId}-r${r}-p2`).classList.toggle('active', res[r] === 'p2');
+                }
+            }
+
+            document.getElementById(`m${matchId}-p1-score`).innerText = p1Score;
+            document.getElementById(`m${matchId}-p2-score`).innerText = p2Score;
+        }
+
+        function finishMatch(matchId) {
+            const s = state[matchId];
+            const loggedCount = s.results.filter(r => r !== null).length;
+            
+            if (loggedCount < 6) {
+                if (!confirm(`Only ${loggedCount}/6 logged. Finish anyway?`)) return;
+            }
+            if (loggedCount === 0) return;
+
+            let p1Score = parseFloat(document.getElementById(`m${matchId}-p1-score`).innerText);
+            let p2Score = parseFloat(document.getElementById(`m${matchId}-p2-score`).innerText);
+
+            processMatchResultForLeaderboard(s.p1, s.p2, p1Score, p2Score, s.isKnockout);
+
+            let logClass = "log-item";
+            let resultText = "";
+
+            if (p1Score > p2Score) {
+                resultText = `<strong>${s.p1}</strong> won (${p1Score} - ${p2Score}) vs ${s.p2}`;
+            } else if (p2Score > p1Score) {
+                resultText = `<strong>${s.p2}</strong> won (${p2Score} - ${p1Score}) vs ${s.p1}`;
+            } else {
+                resultText = `<strong>DRAW</strong> (${p1Score} - ${p2Score}) ${s.p1} vs ${s.p2}`;
+                logClass += " draw-log";
+            }
+
+            const logList = document.getElementById('match-logs');
+            const newLog = document.createElement('li');
+            newLog.className = logClass;
+            newLog.innerHTML = `
+                <span>${resultText}</span>
+                <span class="log-item-match-name">${s.roundName}</span>
+            `;
+            logList.insertBefore(newLog, logList.firstChild);
+
+            document.getElementById(`match-${matchId}`).style.display = 'none';
+        }
+
+        function cancelToSetup(matchId) {
+            const roundIdx = document.getElementById('global-round').value;
+            const fix = tournamentFixtures[roundIdx];
+            const p1 = fix.matches[matchId-1][0];
+            const p2 = fix.matches[matchId-1][1];
+            
+            state[matchId] = { phase: 1, roundName: fix.name, isKnockout: fix.isKnockout, p1: p1, p2: p2, p1Picks: [], p2Picks: [], results: [null, null, null, null, null, null] };
+            renderPhase1(matchId);
+        }
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>
