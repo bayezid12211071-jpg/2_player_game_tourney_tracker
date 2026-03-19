@@ -15,6 +15,8 @@
             --neon-pink: #ff007f;
             --neon-green: #2ecc71;
             --gold: #ffd700;
+            --silver: #c0c0c0;
+            --bronze: #cd7f32;
         }
 
         body {
@@ -29,12 +31,12 @@
             -webkit-tap-highlight-color: transparent; 
         }
 
-        h1 {
+        h1.main-title {
             font-family: 'Orbitron', sans-serif;
             color: var(--neon-blue);
             text-transform: uppercase;
             text-shadow: 0 0 10px rgba(69, 243, 255, 0.3);
-            margin: 10px 0 20px 0;
+            margin: 10px 0 15px 0;
             text-align: center;
             font-weight: 900;
             font-size: 1.8rem;
@@ -46,6 +48,28 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
+        }
+
+        /* Tabs Navigation */
+        .top-nav {
+            display: flex; width: 100%; max-width: 600px; gap: 10px; margin-bottom: 5px;
+        }
+        .nav-btn {
+            flex: 1; background: var(--panel-bg); border: 1px solid #444; color: #888;
+            padding: 12px; border-radius: 8px; font-family: 'Orbitron', sans-serif;
+            font-size: 1rem; font-weight: bold; cursor: pointer; text-transform: uppercase;
+            transition: 0.3s;
+        }
+        .nav-btn.active {
+            border-color: var(--neon-blue); color: var(--neon-blue); box-shadow: inset 0 0 10px rgba(69, 243, 255, 0.1);
+        }
+        .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .nav-btn.unlocked { animation: pulseGold 1.5s infinite; border-color: var(--gold); color: var(--gold); }
+
+        @keyframes pulseGold {
+            0% { box-shadow: 0 0 0 rgba(255, 215, 0, 0); }
+            50% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.5); }
+            100% { box-shadow: 0 0 0 rgba(255, 215, 0, 0); }
         }
 
         /* Global Fixture Selector */
@@ -91,7 +115,7 @@
             box-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
         
-        .leaderboard-section h2 {
+        .leaderboard-section h2, .summary-section h2 {
             font-family: 'Orbitron', sans-serif;
             color: var(--gold);
             margin-top: 0;
@@ -110,8 +134,8 @@
         td { padding: 10px 5px; border-bottom: 1px solid #222; }
 
         .rank-1 { color: var(--gold); font-weight: bold; font-size: 1.1rem; }
-        .rank-2 { color: #c0c0c0; font-weight: bold; }
-        .rank-3 { color: #cd7f32; font-weight: bold; }
+        .rank-2 { color: var(--silver); font-weight: bold; }
+        .rank-3 { color: var(--bronze); font-weight: bold; }
         .pts-col { color: var(--neon-green); font-weight: bold; font-size: 1.1rem; }
 
         /* Playoff Bracket Section */
@@ -123,21 +147,12 @@
             box-shadow: 0 0 20px rgba(255, 0, 127, 0.2);
         }
 
-        .bracket-section h2 {
-            font-family: 'Orbitron', sans-serif;
-            color: var(--neon-pink);
-            margin-top: 0;
-            text-align: center;
-            font-size: 1.3rem;
-            text-shadow: 0 0 10px rgba(255, 0, 127, 0.3);
-        }
+        .bracket-section h2 { color: var(--neon-pink); text-shadow: 0 0 10px rgba(255, 0, 127, 0.3); }
 
         .bracket-container { display: flex; flex-direction: column; gap: 15px; align-items: center; }
         .bracket-row { display: flex; justify-content: space-around; width: 100%; gap: 10px; }
         
-        .bracket-box {
-            background: rgba(0,0,0,0.4); border: 1px solid #444; border-radius: 8px; padding: 10px 5px; width: 48%; text-align: center;
-        }
+        .bracket-box { background: rgba(0,0,0,0.4); border: 1px solid #444; border-radius: 8px; padding: 10px 5px; width: 48%; text-align: center; }
         .bracket-box.centered { width: 60%; border-color: var(--neon-blue); background: rgba(69, 243, 255, 0.05); }
         .bracket-box.final { width: 80%; border-color: var(--gold); background: rgba(255, 215, 0, 0.1); box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
         
@@ -147,23 +162,11 @@
 
         /* Tracker Cards */
         .tracker-container { display: flex; flex-direction: column; gap: 20px; }
-        .match-card {
-            background: var(--panel-bg); border: 1px solid rgba(69, 243, 255, 0.2); border-radius: 12px;
-            padding: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 15px;
-        }
-
+        .match-card { background: var(--panel-bg); border: 1px solid rgba(69, 243, 255, 0.2); border-radius: 12px; padding: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 15px; }
         .match-header { font-family: 'Orbitron', sans-serif; text-align: center; color: #888; font-size: 0.9rem; letter-spacing: 1px; border-bottom: 1px solid #333; padding-bottom: 10px; }
         .round-name-display { color: var(--neon-blue); font-size: 1.1rem; font-weight: bold; display: block; margin-bottom: 5px; }
-
-        /* Setup Phase */
         .player-select-row { display: flex; justify-content: space-between; align-items: center; gap: 5px; margin-top: 10px; }
-        
-        .fixed-player {
-            background: rgba(0,0,0,0.5); color: #fff; border: 1px solid #444; padding: 15px 5px;
-            border-radius: 8px; font-family: 'Orbitron', sans-serif; font-size: 1rem; width: 45%; text-align: center; box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
-            word-wrap: break-word;
-        }
-
+        .fixed-player { background: rgba(0,0,0,0.5); color: #fff; border: 1px solid #444; padding: 15px 5px; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-size: 1rem; width: 45%; text-align: center; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); word-wrap: break-word; }
         .vs-text { font-family: 'Orbitron', sans-serif; color: var(--neon-pink); font-weight: bold; font-size: 1.2rem; }
 
         /* Draft Phase */
@@ -171,7 +174,6 @@
         .draft-header { font-size: 0.85rem; color: #aaa; text-align: center; font-weight: bold; text-transform: uppercase; border-bottom: 1px dashed #444; padding-bottom: 5px; }
         .draft-header span { color: var(--neon-blue); font-family: 'Orbitron', sans-serif;}
         .draft-grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
-        
         .draft-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.2s; opacity: 0.5; width: 65px; }
         .draft-item img { width: 65px; height: 65px; object-fit: cover; border-radius: 8px; border: 2px solid transparent; }
         .draft-item span { font-size: 0.65rem; color: #ccc; margin-top: 5px; text-align: center; line-height: 1.1; font-weight: bold; }
@@ -182,40 +184,26 @@
         /* Track Phase */
         .score-board { display: flex; justify-content: center; align-items: center; gap: 20px; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; border: 1px solid #333; }
         .score { font-family: 'Orbitron', sans-serif; font-size: 2.5rem; font-weight: bold; color: var(--gold); width: 60px; text-align: center; text-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
-        
         .games-list { display: flex; flex-direction: column; gap: 10px; margin-top: 5px; }
-        
         .game-row { display: flex; flex-direction: column; gap: 10px; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; border: 1px solid #222; }
         .game-row-header { display: flex; align-items: center; gap: 12px; }
         .game-icon { width: 45px; height: 45px; border-radius: 6px; object-fit: cover; border: 1px solid #444; }
-        
         .game-info { flex-grow: 1; display: flex; flex-direction: column; }
         .game-name { font-size: 1.2rem; color: #eee; font-weight: bold; }
         .picker-tag { font-size: 0.75rem; color: #888; text-transform: uppercase; font-weight: bold; font-family: 'Orbitron', sans-serif; }
         .picker-tag span { color: var(--neon-blue); }
-
         .result-toggles { display: flex; gap: 6px; width: 100%; }
-        .result-btn {
-            flex: 1; 
-            background: #111; border: 1px solid #444; color: #888; padding: 12px 0;
-            border-radius: 6px; cursor: pointer; font-family: 'Orbitron', sans-serif; font-size: 0.9rem; font-weight: bold; transition: 0.2s;
-            text-align: center;
-        }
+        .result-btn { flex: 1; background: #111; border: 1px solid #444; color: #888; padding: 12px 0; border-radius: 6px; cursor: pointer; font-family: 'Orbitron', sans-serif; font-size: 0.9rem; font-weight: bold; transition: 0.2s; text-align: center; }
         .btn-p1.active { background: rgba(69, 243, 255, 0.2); border-color: var(--neon-blue); color: var(--neon-blue); }
         .btn-draw.active { background: rgba(241, 196, 15, 0.2); border-color: #f1c40f; color: #f1c40f; }
         .btn-p2.active { background: rgba(255, 0, 127, 0.2); border-color: var(--neon-pink); color: var(--neon-pink); }
 
         /* Action Buttons */
-        .btn-action {
-            background: rgba(69, 243, 255, 0.1); border: 1px solid var(--neon-blue); color: var(--neon-blue);
-            padding: 16px; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-size: 1.1rem;
-            cursor: pointer; text-transform: uppercase; transition: 0.3s; margin-top: 10px; width: 100%; font-weight: bold;
-        }
+        .btn-action { background: rgba(69, 243, 255, 0.1); border: 1px solid var(--neon-blue); color: var(--neon-blue); padding: 16px; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-size: 1.1rem; cursor: pointer; text-transform: uppercase; transition: 0.3s; margin-top: 10px; width: 100%; font-weight: bold; }
         .btn-action:active:not(:disabled) { background: var(--neon-blue); color: var(--bg-color); } 
         .btn-action:disabled { opacity: 0.5; pointer-events: none; border-color: #555; color: #555; }
-        
-        .btn-danger { border-color: var(--danger); color: var(--danger); background: rgba(231, 76, 60, 0.1); margin-top: 5px; }
-        .btn-danger:active { background: var(--danger); color: #fff; }
+        .btn-danger { border-color: #e74c3c; color: #e74c3c; background: rgba(231, 76, 60, 0.1); margin-top: 5px; }
+        .btn-danger:active { background: #e74c3c; color: #fff; }
 
         /* Logs */
         .logs-section { background: var(--panel-bg); border-radius: 12px; padding: 15px; border: 1px solid rgba(255, 0, 127, 0.2); }
@@ -224,13 +212,46 @@
         .log-item { background: rgba(0,0,0,0.3); padding: 15px; border-left: 4px solid var(--neon-green); border-radius: 6px; display: flex; flex-direction: column; gap: 5px; font-size: 1rem;}
         .draw-log { border-left-color: #f1c40f; }
         .log-item-match-name { color: var(--neon-blue); font-size: 0.85rem; font-weight: bold; font-family: 'Orbitron', sans-serif; }
+
+        /* Summary Tab Styling */
+        .summary-section {
+            background: var(--panel-bg); border: 1px solid var(--gold); border-radius: 12px; padding: 20px;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.2); text-align: center;
+        }
+        .champ-card {
+            background: linear-gradient(135deg, rgba(255,215,0,0.1) 0%, rgba(255,215,0,0.3) 100%);
+            border: 2px solid var(--gold); border-radius: 12px; padding: 25px 15px; margin-bottom: 20px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); text-transform: uppercase;
+        }
+        .champ-card p { font-family: 'Orbitron', sans-serif; color: #fff; margin: 0 0 10px 0; font-size: 0.9rem; letter-spacing: 2px;}
+        .champ-card h1 { font-family: 'Orbitron', sans-serif; color: var(--gold); font-size: 2.8rem; margin: 0; text-shadow: 0 0 15px rgba(255, 215, 0, 0.8); line-height: 1; }
+        
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .stat-box { background: rgba(0,0,0,0.5); border-radius: 8px; padding: 15px; border: 1px solid #444; display: flex; flex-direction: column; justify-content: center;}
+        .stat-box h3 { font-family: 'Orbitron', sans-serif; color: #888; font-size: 0.75rem; margin: 0 0 5px 0; text-transform: uppercase; }
+        .stat-box p { font-size: 1.3rem; font-weight: bold; margin: 0; }
+        
+        .stat-silver { border-color: var(--silver); box-shadow: inset 0 0 10px rgba(192, 192, 192, 0.1); }
+        .stat-silver p { color: var(--silver); }
+        .stat-bronze { border-color: var(--bronze); box-shadow: inset 0 0 10px rgba(205, 127, 50, 0.1); }
+        .stat-bronze p { color: var(--bronze); }
+        .stat-blue { border-color: var(--neon-blue); box-shadow: inset 0 0 10px rgba(69, 243, 255, 0.1); }
+        .stat-blue p { color: var(--neon-blue); }
+        .stat-green { border-color: var(--neon-green); box-shadow: inset 0 0 10px rgba(46, 204, 113, 0.1); }
+        .stat-green p { color: var(--neon-green); }
+
     </style>
 </head>
 <body>
 
-    <h1>Tournament App</h1>
+    <h1 class="main-title">Tournament App</h1>
 
-    <div class="main-container">
+    <div class="top-nav">
+        <button id="nav-tourney" class="nav-btn active" onclick="switchTab('tourney')">Tournament</button>
+        <button id="nav-summary" class="nav-btn" onclick="switchTab('summary')" disabled>Summary</button>
+    </div>
+
+    <div id="view-tourney" class="main-container">
         
         <div class="fixture-control-bar">
             <label for="global-round">Active Stage</label>
@@ -306,6 +327,46 @@
 
     </div>
 
+    <div id="view-summary" class="main-container" style="display: none;">
+        <div class="summary-section">
+            
+            <div class="champ-card">
+                <p>👑 Tournament Champion 👑</p>
+                <h1 id="sum-champion">???</h1>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-box stat-silver">
+                    <h3>Runner Up</h3>
+                    <p id="sum-runnerup">???</p>
+                </div>
+                <div class="stat-box stat-bronze">
+                    <h3>3rd Place</h3>
+                    <p id="sum-third">???</p>
+                </div>
+                <div class="stat-box stat-blue">
+                    <h3>Most Game Wins</h3>
+                    <p id="sum-most-wins">???</p>
+                </div>
+                <div class="stat-box stat-green">
+                    <h3>Group Stage MVP</h3>
+                    <p id="sum-most-pts">???</p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="bracket-section">
+            <h2>Final Playoff Bracket</h2>
+            <div id="sum-bracket-container" style="margin-top: 15px;"></div>
+        </div>
+
+        <div class="leaderboard-section">
+            <h2>Final Group Standings</h2>
+            <div id="sum-lb-container" style="margin-top: 15px;"></div>
+        </div>
+    </div>
+
     <script>
         const players = ["Bayezid", "Yusha", "Fatiha", "Zariya", "Yusuf", "Sadeed"];
         
@@ -360,12 +421,18 @@
         };
 
         let leaderboard = {};
-        players.forEach(p => {
-            leaderboard[p] = { played: 0, won: 0, drawn: 0, lost: 0, points: 0, gameWins: 0 };
-        });
+        players.forEach(p => { leaderboard[p] = { played: 0, won: 0, drawn: 0, lost: 0, points: 0, gameWins: 0 }; });
 
         const state = {};
-        let playoffs = { q1Win: null, q1Lose: null, elimWin: null, q2Win: null };
+        let playoffs = { q1Win: null, q1Lose: null, elimWin: null, q2Win: null, q2Lose: null, champion: null, runnerUp: null };
+
+        function switchTab(tabId) {
+            document.getElementById('nav-tourney').classList.toggle('active', tabId === 'tourney');
+            document.getElementById('nav-summary').classList.toggle('active', tabId === 'summary');
+            document.getElementById('view-tourney').style.display = tabId === 'tourney' ? 'flex' : 'none';
+            document.getElementById('view-summary').style.display = tabId === 'summary' ? 'flex' : 'none';
+            window.scrollTo(0,0);
+        }
 
         function getSortedPlayers() {
             return Object.keys(leaderboard).sort((a, b) => {
@@ -411,17 +478,16 @@
                     continue;
                 }
 
-                // Split the playoff names for the UI and logs
                 let specificRoundName = fix.name;
-                if (roundIdx === 5) {
-                    specificRoundName = (i === 1) ? "Qualifier 1" : "Eliminator";
-                }
+                if (roundIdx === 5) specificRoundName = (i === 1) ? "Qualifier 1" : "Eliminator";
 
-                state[i] = { phase: 1, roundName: specificRoundName, isKnockout: fix.isKnockout, p1: p1, p2: p2, p1Picks: [], p2Picks: [], results: [null, null, null, null, null, null] };
+                state[i] = { 
+                    phase: 1, roundName: specificRoundName, isKnockout: fix.isKnockout, p1: p1, p2: p2, 
+                    tbLevel: 0, p1AllPicks: [], p2AllPicks: [], currentP1Picks: [], currentP2Picks: [], currentGames: [], results: [] 
+                };
                 
                 renderPhase1(i);
             }
-            
             updateBracketUI(sortedPlayers); 
         }
 
@@ -451,7 +517,6 @@
                 `;
             });
             tbody.innerHTML = html;
-            
             updateBracketUI(sortedPlayers);
         }
 
@@ -470,18 +535,12 @@
 
         function processMatchResultForLeaderboard(p1, p2, p1Score, p2Score, isKnockout) {
             if (!isKnockout) {
-                leaderboard[p1].played += 1;
-                leaderboard[p2].played += 1;
-                leaderboard[p1].gameWins += p1Score; 
-                leaderboard[p2].gameWins += p2Score; 
+                leaderboard[p1].played += 1; leaderboard[p2].played += 1;
+                leaderboard[p1].gameWins += p1Score; leaderboard[p2].gameWins += p2Score; 
 
-                if (p1Score > p2Score) {
-                    leaderboard[p1].won += 1; leaderboard[p1].points += 3; leaderboard[p2].lost += 1;
-                } else if (p2Score > p1Score) {
-                    leaderboard[p2].won += 1; leaderboard[p2].points += 3; leaderboard[p1].lost += 1;
-                } else {
-                    leaderboard[p1].drawn += 1; leaderboard[p1].points += 1; leaderboard[p2].drawn += 1; leaderboard[p2].points += 1;
-                }
+                if (p1Score > p2Score) { leaderboard[p1].won += 1; leaderboard[p1].points += 3; leaderboard[p2].lost += 1; } 
+                else if (p2Score > p1Score) { leaderboard[p2].won += 1; leaderboard[p2].points += 3; leaderboard[p1].lost += 1; } 
+                else { leaderboard[p1].drawn += 1; leaderboard[p1].points += 1; leaderboard[p2].drawn += 1; leaderboard[p2].points += 1; }
                 updateLeaderboardUI();
             }
         }
@@ -510,83 +569,85 @@
 
         function startDraft(matchId) {
             const s = state[matchId];
-            s.phase = 2;
+            s.currentP1Picks = []; s.currentP2Picks = []; s.phase = 2;
             renderPhase2(matchId);
         }
 
         function renderPhase2(matchId) {
             const s = state[matchId];
             const card = document.getElementById(`match-${matchId}`);
+            const draftTitleExtra = s.tbLevel === 1 ? " (TIEBREAKER)" : "";
+
             card.innerHTML = `
                 <div class="match-header">
-                    <span class="round-name-display" style="font-size: 0.9rem;">${s.roundName}</span>
+                    <span class="round-name-display" style="font-size: 0.9rem;">${s.roundName}${draftTitleExtra}</span>
                     DRAFTING
                 </div>
                 <div class="draft-section">
                     <div class="draft-header"><span>${s.p1}</span> picks 3 from ${s.p2}</div>
-                    <div class="draft-grid" id="m${matchId}-deck-p2">
-                        ${generateDraftGrid(matchId, s.p2, 'p1Picks')}
-                    </div>
+                    <div class="draft-grid" id="m${matchId}-deck-p2">${generateDraftGrid(matchId, s.p2, 'currentP1Picks')}</div>
                 </div>
                 <div class="draft-section" style="margin-top: 5px;">
                     <div class="draft-header"><span>${s.p2}</span> picks 3 from ${s.p1}</div>
-                    <div class="draft-grid" id="m${matchId}-deck-p1">
-                        ${generateDraftGrid(matchId, s.p1, 'p2Picks')}
-                    </div>
+                    <div class="draft-grid" id="m${matchId}-deck-p1">${generateDraftGrid(matchId, s.p1, 'currentP2Picks')}</div>
                 </div>
                 <div style="margin-top: 15px;">
                     <button class="btn-action" id="m${matchId}-btn-track" disabled onclick="startTracking(${matchId})">Lock Matches</button>
-                    <button class="btn-action btn-danger" onclick="cancelToSetup(${matchId})">Back</button>
+                    <button class="btn-action btn-danger" onclick="cancelToSetup(${matchId})">Back / Restart</button>
                 </div>
             `;
         }
 
         function generateDraftGrid(matchId, deckOwner, pickingArrayName) {
+            const s = state[matchId];
+            const allPicks = pickingArrayName === 'currentP1Picks' ? s.p1AllPicks : s.p2AllPicks;
+            const currentPicks = s[pickingArrayName];
+            
             return playerDecks[deckOwner].map(gameId => {
                 const game = gamesDB[gameId];
+                if (allPicks.includes(gameId)) return ''; 
+                
+                let classes = 'draft-item' + (currentPicks.includes(gameId) ? ' selected' : '');
                 return `
-                    <div class="draft-item" id="m${matchId}-${pickingArrayName}-${gameId}" onclick="toggleDraft(${matchId}, '${pickingArrayName}', '${gameId}')">
-                        <img src="${game.img}" alt="${game.name}">
-                        <span>${game.name}</span>
-                    </div>
-                `;
+                    <div class="${classes}" id="m${matchId}-${pickingArrayName}-${gameId}" onclick="toggleDraft(${matchId}, '${pickingArrayName}', '${gameId}')">
+                        <img src="${game.img}" alt="${game.name}"><span>${game.name}</span>
+                    </div>`;
             }).join('');
         }
 
         function toggleDraft(matchId, arrayName, gameId) {
-            const arr = state[matchId][arrayName];
+            const s = state[matchId];
+            const arr = s[arrayName];
             const el = document.getElementById(`m${matchId}-${arrayName}-${gameId}`);
             
-            if (arr.includes(gameId)) {
-                arr.splice(arr.indexOf(gameId), 1);
-                el.classList.remove('selected');
-            } else {
-                if (arr.length >= 3) return; 
-                arr.push(gameId);
-                el.classList.add('selected');
-            }
+            if (arr.includes(gameId)) { arr.splice(arr.indexOf(gameId), 1); el.classList.remove('selected'); } 
+            else { if (arr.length >= 3) return; arr.push(gameId); el.classList.add('selected'); }
             updateDraftVisuals(matchId, arrayName);
         }
 
         function updateDraftVisuals(matchId, arrayName) {
-            const arr = state[matchId][arrayName];
-            const deckOwner = arrayName === 'p1Picks' ? state[matchId].p2 : state[matchId].p1;
+            const s = state[matchId];
+            const arr = s[arrayName];
+            const deckOwner = arrayName === 'currentP1Picks' ? s.p2 : s.p1;
             const isFull = arr.length >= 3;
 
             playerDecks[deckOwner].forEach(gameId => {
                 const el = document.getElementById(`m${matchId}-${arrayName}-${gameId}`);
-                if (isFull && !arr.includes(gameId)) el.classList.add('disabled');
-                else el.classList.remove('disabled');
+                if (el) { if (isFull && !arr.includes(gameId)) el.classList.add('disabled'); else el.classList.remove('disabled'); }
             });
 
-            const p1Ready = state[matchId].p1Picks.length === 3;
-            const p2Ready = state[matchId].p2Picks.length === 3;
-            document.getElementById(`m${matchId}-btn-track`).disabled = !(p1Ready && p2Ready);
+            document.getElementById(`m${matchId}-btn-track`).disabled = !(s.currentP1Picks.length === 3 && s.currentP2Picks.length === 3);
         }
 
         function startTracking(matchId) {
-            state[matchId].phase = 3;
-            state[matchId].results = [null, null, null, null, null, null];
+            const s = state[matchId];
+            s.phase = 3; s.p1AllPicks.push(...s.currentP1Picks); s.p2AllPicks.push(...s.currentP2Picks); s.currentGames = [];
+            const maxPicks = Math.max(s.currentP1Picks.length, s.currentP2Picks.length);
+            for (let i = 0; i < maxPicks; i++) {
+                if (s.currentP1Picks[i]) s.currentGames.push({ id: s.currentP1Picks[i], pickedBy: s.p1 });
+                if (s.currentP2Picks[i]) s.currentGames.push({ id: s.currentP2Picks[i], pickedBy: s.p2 });
+            }
+            s.results = new Array(s.currentGames.length).fill(null);
             renderPhase3(matchId);
         }
 
@@ -594,72 +655,46 @@
             const s = state[matchId];
             const card = document.getElementById(`match-${matchId}`);
             
-            const finalGames = [];
-            for (let i = 0; i < 3; i++) {
-                finalGames.push({ id: s.p1Picks[i], pickedBy: s.p1 });
-                finalGames.push({ id: s.p2Picks[i], pickedBy: s.p2 });
-            }
-
             let rowsHTML = '';
-            finalGames.forEach((item, r) => {
+            s.currentGames.forEach((item, r) => {
                 const game = gamesDB[item.id];
                 rowsHTML += `
                     <div class="game-row">
                         <div class="game-row-header">
                             <img src="${game.img}" class="game-icon">
-                            <div class="game-info">
-                                <div class="game-name">${game.name}</div>
-                                <div class="picker-tag">Picked by: <span>${item.pickedBy}</span></div>
-                            </div>
+                            <div class="game-info"><div class="game-name">${game.name}</div><div class="picker-tag">Picked by: <span>${item.pickedBy}</span></div></div>
                         </div>
                         <div class="result-toggles">
                             <button class="result-btn btn-p1" id="m${matchId}-r${r}-p1" onclick="setWinner(${matchId}, ${r}, 'p1')">${s.p1}</button>
                             <button class="result-btn btn-draw" id="m${matchId}-r${r}-draw" onclick="setWinner(${matchId}, ${r}, 'draw')">Draw</button>
                             <button class="result-btn btn-p2" id="m${matchId}-r${r}-p2" onclick="setWinner(${matchId}, ${r}, 'p2')">${s.p2}</button>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
 
+            let extraInfo = s.tbLevel > 0 ? `<br><span style="color:#f1c40f; font-size:0.8rem">TIEBREAKER MODE</span>` : "";
+
             card.innerHTML = `
-                <div class="match-header">
-                    <span class="round-name-display" style="font-size: 0.9rem;">${s.roundName}</span>
-                    ${s.p1} <span style="color:var(--neon-pink)">VS</span> ${s.p2}
-                </div>
-                
-                <div class="score-board">
-                    <div class="score" id="m${matchId}-p1-score">0</div>
-                    <div style="color: #555; font-size: 1.5rem;">-</div>
-                    <div class="score" id="m${matchId}-p2-score">0</div>
-                </div>
-
-                <div class="games-list">
-                    ${rowsHTML}
-                </div>
-
-                <button class="btn-action" onclick="finishMatch(${matchId})">Log Match</button>
+                <div class="match-header"><span class="round-name-display" style="font-size: 0.9rem;">${s.roundName}</span>${s.p1} <span style="color:var(--neon-pink)">VS</span> ${s.p2}${extraInfo}</div>
+                <div class="score-board"><div class="score" id="m${matchId}-p1-score">0</div><div style="color: #555; font-size: 1.5rem;">-</div><div class="score" id="m${matchId}-p2-score">0</div></div>
+                <div class="games-list">${rowsHTML}</div>
+                <button class="btn-action" onclick="finishMatch(${matchId})">Log Stage</button>
             `;
         }
 
         function setWinner(matchId, rowId, winner) {
             const s = state[matchId];
-            if (s.results[rowId] === winner) s.results[rowId] = null; 
-            else s.results[rowId] = winner;
+            if (s.results[rowId] === winner) s.results[rowId] = null; else s.results[rowId] = winner;
             updateScoreUI(matchId);
         }
 
         function updateScoreUI(matchId) {
-            let p1Score = 0;
-            let p2Score = 0;
-            const res = state[matchId].results;
+            let p1Score = 0; let p2Score = 0; const s = state[matchId]; const res = s.results;
 
-            for (let r = 0; r < 6; r++) {
+            for (let r = 0; r < s.currentGames.length; r++) {
                 if (res[r] === 'p1') p1Score += 1;
                 if (res[r] === 'p2') p2Score += 1;
-                if (res[r] === 'draw') {
-                    p1Score += 0.5;
-                    p2Score += 0.5;
-                }
+                if (res[r] === 'draw') { p1Score += 0.5; p2Score += 0.5; }
 
                 if(document.getElementById(`m${matchId}-r${r}-p1`)) {
                     document.getElementById(`m${matchId}-r${r}-p1`).classList.toggle('active', res[r] === 'p1');
@@ -667,7 +702,6 @@
                     document.getElementById(`m${matchId}-r${r}-p2`).classList.toggle('active', res[r] === 'p2');
                 }
             }
-
             document.getElementById(`m${matchId}-p1-score`).innerText = p1Score;
             document.getElementById(`m${matchId}-p2-score`).innerText = p2Score;
         }
@@ -675,67 +709,107 @@
         function finishMatch(matchId) {
             const s = state[matchId];
             const loggedCount = s.results.filter(r => r !== null).length;
+            const totalGames = s.currentGames.length;
             
-            if (loggedCount < 6) {
-                if (!confirm(`Only ${loggedCount}/6 logged. Finish anyway?`)) return;
-            }
+            if (loggedCount < totalGames) { if (!confirm(`Only ${loggedCount}/${totalGames} logged. Finish anyway?`)) return; }
             if (loggedCount === 0) return;
 
             let p1Score = parseFloat(document.getElementById(`m${matchId}-p1-score`).innerText);
             let p2Score = parseFloat(document.getElementById(`m${matchId}-p2-score`).innerText);
 
-            processMatchResultForLeaderboard(s.p1, s.p2, p1Score, p2Score, s.isKnockout);
+            if (s.isKnockout && p1Score === p2Score) {
+                if (s.tbLevel === 0) {
+                    alert("Match Drawn! Proceeding to Tiebreaker 1: Pick 3 games from opponent's remaining 4 games.");
+                    s.tbLevel = 1; s.totalP1Score = p1Score; s.totalP2Score = p2Score; startDraft(matchId); return;
+                } else if (s.tbLevel === 1) {
+                    alert("Still Drawn! Proceeding to Sudden Death: Battle with the final remaining game from each deck.");
+                    s.tbLevel = 2; s.totalP1Score += p1Score; s.totalP2Score += p2Score;
+                    s.currentP1Picks = playerDecks[s.p2].filter(g => !s.p1AllPicks.includes(g));
+                    s.currentP2Picks = playerDecks[s.p1].filter(g => !s.p2AllPicks.includes(g));
+                    startTracking(matchId); return;
+                } else if (s.tbLevel === 2) {
+                    alert("Unbelievable! Still Drawn! The match will completely restart."); cancelToSetup(matchId); return;
+                }
+            }
+
+            s.totalP1Score = (s.totalP1Score || 0) + p1Score; s.totalP2Score = (s.totalP2Score || 0) + p2Score;
+            processMatchResultForLeaderboard(s.p1, s.p2, s.totalP1Score, s.totalP2Score, s.isKnockout);
+
+            let winner = s.totalP1Score > s.totalP2Score ? s.p1 : s.p2; 
+            let loser = s.totalP1Score > s.totalP2Score ? s.p2 : s.p1;
 
             if (s.isKnockout) {
-                let winner = p1Score > p2Score ? s.p1 : s.p2; 
-                let loser = p1Score > p2Score ? s.p2 : s.p1;
-                
-                if (s.roundName === "Qualifier 1") {
-                    playoffs.q1Win = winner; playoffs.q1Lose = loser; 
-                } else if (s.roundName === "Eliminator") {
-                    playoffs.elimWin = winner; 
-                } else if (s.roundName.includes("Qualifier 2")) {
-                    playoffs.q2Win = winner; 
-                }
+                if (s.roundName === "Qualifier 1") { playoffs.q1Win = winner; playoffs.q1Lose = loser; } 
+                else if (s.roundName === "Eliminator") { playoffs.elimWin = winner; } 
+                else if (s.roundName.includes("Qualifier 2")) { playoffs.q2Win = winner; playoffs.q2Lose = loser; }
                 updateLeaderboardUI(); 
             }
 
-            let logClass = "log-item";
-            let resultText = "";
-
-            if (p1Score > p2Score) {
-                resultText = `<strong>${s.p1}</strong> won (${p1Score} - ${p2Score}) vs ${s.p2}`;
-            } else if (p2Score > p1Score) {
-                resultText = `<strong>${s.p2}</strong> won (${p2Score} - ${p1Score}) vs ${s.p1}`;
-            } else {
-                resultText = `<strong>DRAW</strong> (${p1Score} - ${p2Score}) ${s.p1} vs ${s.p2}`;
-                logClass += " draw-log";
-            }
+            let logClass = "log-item"; let resultText = "";
+            if (s.totalP1Score > s.totalP2Score) resultText = `<strong>${s.p1}</strong> won (${s.totalP1Score} - ${s.totalP2Score}) vs ${s.p2}`;
+            else if (s.totalP2Score > s.totalP1Score) resultText = `<strong>${s.p2}</strong> won (${s.totalP2Score} - ${s.totalP1Score}) vs ${s.p1}`;
+            else { resultText = `<strong>DRAW</strong> (${s.totalP1Score} - ${s.totalP2Score}) ${s.p1} vs ${s.p2}`; logClass += " draw-log"; }
 
             const logList = document.getElementById('match-logs');
-            const newLog = document.createElement('li');
-            newLog.className = logClass;
-            newLog.innerHTML = `
-                <span>${resultText}</span>
-                <span class="log-item-match-name">${s.roundName}</span>
-            `;
+            const newLog = document.createElement('li'); newLog.className = logClass;
+            newLog.innerHTML = `<span>${resultText}</span><span class="log-item-match-name">${s.roundName}</span>`;
             logList.insertBefore(newLog, logList.firstChild);
 
             document.getElementById(`match-${matchId}`).style.display = 'none';
+
+            // Check if tournament is completely over
+            if (s.roundName.includes("Grand Final")) {
+                playoffs.champion = winner; playoffs.runnerUp = loser;
+                alert(`🏆 ${winner.toUpperCase()} HAS WON THE TOURNAMENT! 🏆\nCheck out the Summary Tab!`);
+                
+                const sumBtn = document.getElementById('nav-summary');
+                sumBtn.disabled = false;
+                sumBtn.classList.add('unlocked');
+                sumBtn.innerText = "🏆 VIEW SUMMARY";
+                
+                generateSummary();
+                switchTab('summary');
+            }
+        }
+
+        function generateSummary() {
+            document.getElementById('sum-champion').innerText = playoffs.champion;
+            document.getElementById('sum-runnerup').innerText = playoffs.runnerUp;
+            document.getElementById('sum-third').innerText = playoffs.q2Lose || "TBD";
+
+            let maxWins = -1, maxWinPlayer = "-";
+            let maxPts = -1, maxPtsPlayer = "-";
+
+            players.forEach(p => {
+                if (leaderboard[p].gameWins > maxWins) { maxWins = leaderboard[p].gameWins; maxWinPlayer = p; }
+                if (leaderboard[p].points > maxPts) { maxPts = leaderboard[p].points; maxPtsPlayer = p; }
+            });
+
+            document.getElementById('sum-most-wins').innerText = `${maxWinPlayer} (${maxWins})`;
+            document.getElementById('sum-most-pts').innerText = `${maxPtsPlayer} (${maxPts} Pts)`;
+
+            let lbHTML = document.querySelector('.table-responsive').outerHTML;
+            lbHTML = lbHTML.replace(/id="[^"]*"/g, ""); 
+            document.getElementById('sum-lb-container').innerHTML = lbHTML;
+            
+            // Clone the bracket and force all hidden rows to display block
+            let brContainer = document.querySelector('.bracket-container').cloneNode(true);
+            brContainer.querySelectorAll('.bracket-row').forEach(row => {
+                row.style.display = 'flex'; 
+            });
+            let brHTML = brContainer.outerHTML.replace(/id="[^"]*"/g, ""); 
+            document.getElementById('sum-bracket-container').innerHTML = brHTML;
         }
 
         function cancelToSetup(matchId) {
             const roundIdx = parseInt(document.getElementById('global-round').value);
             const fix = tournamentFixtures[roundIdx];
-            const p1 = fix.matches[matchId-1][0];
-            const p2 = fix.matches[matchId-1][1];
+            const p1 = fix.matches[matchId-1][0]; const p2 = fix.matches[matchId-1][1];
             
             let specificRoundName = fix.name;
-            if (roundIdx === 5) {
-                specificRoundName = (matchId === 1) ? "Qualifier 1" : "Eliminator";
-            }
+            if (roundIdx === 5) specificRoundName = (matchId === 1) ? "Qualifier 1" : "Eliminator";
             
-            state[matchId] = { phase: 1, roundName: specificRoundName, isKnockout: fix.isKnockout, p1: p1, p2: p2, p1Picks: [], p2Picks: [], results: [null, null, null, null, null, null] };
+            state[matchId] = { phase: 1, roundName: specificRoundName, isKnockout: fix.isKnockout, p1: p1, p2: p2, tbLevel: 0, p1AllPicks: [], p2AllPicks: [], currentP1Picks: [], currentP2Picks: [], currentGames: [], results: [] };
             renderPhase1(matchId);
         }
 
